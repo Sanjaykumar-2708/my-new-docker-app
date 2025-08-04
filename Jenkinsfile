@@ -1,10 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'my-new-docker-app'
+        DOCKER_HUB_USER = 'sanjub07'
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/Sanjaykumar-2708/my-new-docker-app.git'
+                git 'https://github.com/Sanjaykumar-2708/my-new-docker-app.git'
             }
         }
 
@@ -16,15 +21,18 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t my-new-docker-app .'
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
-        stage('Run Docker Container') {
-    steps {
-        bat 'docker rm -f my-new-container || exit 0'
-        bat 'docker run -d -p 3001:3000 --name my-new-container my-new-docker-app'
-    }
-}
+        stage('Login to Docker Hub and Push Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                    bat "docker tag %IMAGE_NAME% %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
+                    bat "docker push %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
+                }
+            }
+        }
     }
 }
