@@ -22,7 +22,7 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d -p 3000:3000 --name my-new-container my-new-docker-app'
+                bat 'docker run -d -p 3001:3000 --name my-new-container my-new-docker-app'
             }
         }
     }
