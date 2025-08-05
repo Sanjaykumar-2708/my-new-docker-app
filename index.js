@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
+const port = 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello from my new Docker app!');
+  res.send('Hello from Docker!');
 });
 
-app.listen(3000, () => {
-  console.log('App listening on port 3000');
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
